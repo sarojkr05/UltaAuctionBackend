@@ -1,5 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import serverConfig from './config/serverConfig.js';
 import connectDB from './config/dbConfig.js'
 import userRouter from './routes/userRoutes.js';
@@ -8,6 +9,11 @@ import auctionRouter from './routes/auctionRoutes.js';
 import bidRouter from './routes/bidRoutes.js';
 
 const app = express();
+
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}))
 
 app.use(express.json());
 app.use(express.text());

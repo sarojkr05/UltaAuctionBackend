@@ -2,6 +2,8 @@ import { createAuctionService, declareWinnerService, deleteAuctionByIdService, g
 
 export async function createAuctionController(req, res) {
     try {
+        console.log("REQ BODY:", req.body);
+        console.log("REQ FILE:", req.file);
         // merge file path into auction data
         const auctionData = {
             ...req.body,

@@ -41,7 +41,6 @@ const auctionSchema = new mongoose.Schema(
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     winnerId: {
       type: mongoose.Schema.Types.ObjectId,

@@ -7,10 +7,10 @@ const auctionRouter = express.Router();
 
 auctionRouter.post('/', isLoggedIn, isAdmin, uploader.single('auctionImage'), createAuctionController);
 auctionRouter.get('/', isLoggedIn, getAuctionController); // Get auction listings
-auctionRouter.post('/:id/declare-winner', declareWinnerController); // Declare winner manually
+auctionRouter.post('/:id/declare-winner', isLoggedIn, isAdmin, declareWinnerController); // Declare winner manually
 auctionRouter.get('/auction/:id', isLoggedIn, getAuctionByIdController);
-auctionRouter.patch('/auction/:id', isLoggedIn, uploader.single('auctionImage'), updateAuctionByIdController);
-auctionRouter.delete('/auction/:id', isLoggedIn, deleteAuctionByIdController);
+auctionRouter.patch('/auction/:id', isLoggedIn, isAdmin, uploader.single('auctionImage'), updateAuctionByIdController);
+auctionRouter.delete('/auction/:id', isLoggedIn, isAdmin, deleteAuctionByIdController);
 
 
 

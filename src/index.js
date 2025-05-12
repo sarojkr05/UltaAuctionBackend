@@ -7,6 +7,7 @@ import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import auctionRouter from './routes/auctionRoutes.js';
 import bidRouter from './routes/bidRoutes.js';
+import adminRouter from './routes/adminRoutes.js';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/users', userRouter); // connects the router to the server
 app.use('/auth', authRouter)
 app.use('/auctions', auctionRouter);
 app.use("/bids", bidRouter)
+app.use("/", adminRouter);
 
 app.post('/ping', (req, res) => {
     console.log(req.body);

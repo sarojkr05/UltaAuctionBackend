@@ -5,6 +5,10 @@ export async function placeBidController(req, res) {
         const {auctionId, bidAmount} = req.body;
         const userId = req.user.id;
 
+        console.log("auctionId:", auctionId);
+        console.log("userId:", userId);
+        console.log("bidAmount:", bidAmount);
+
         const response = await placeBidService(auctionId, userId, bidAmount)
         res.status(201).json({
             success: true,
@@ -12,10 +16,14 @@ export async function placeBidController(req, res) {
             data: response
         })
     } catch (error) {
-        res.status(500).json({
-            message: "Error placing bid",
-            error: error.message
-        })
+        const statusCode = error.message.includes("already") || error.message.includes("full")
+    ? 400
+    : 500;
+
+        res.status(statusCode).json({
+        success: false,
+        message: error.message
+        });
     }
 }
 

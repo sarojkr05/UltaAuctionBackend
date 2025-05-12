@@ -9,8 +9,8 @@ auctionRouter.post('/', isLoggedIn, isAdmin, uploader.single('auctionImage'), cr
 auctionRouter.get('/', isLoggedIn, getAuctionController); // Get auction listings
 auctionRouter.post('/:id/declare-winner', isLoggedIn, isAdmin, declareWinnerController); // Declare winner manually
 auctionRouter.get('/auction/:id', isLoggedIn, getAuctionByIdController);
-auctionRouter.patch('/auction/:id', isLoggedIn, isAdmin, uploader.single('auctionImage'), updateAuctionByIdController);
-auctionRouter.delete('/auction/:id', isLoggedIn, isAdmin, deleteAuctionByIdController);
+auctionRouter.patch('/:id', isLoggedIn, isAdmin, uploader.single('auctionImage'), updateAuctionByIdController);
+auctionRouter.delete('/:id', isLoggedIn, isAdmin, deleteAuctionByIdController);
 
 
 

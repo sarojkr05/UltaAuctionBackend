@@ -31,6 +31,7 @@ import Bid from "../schema/bidSchema.js"
 export async function placeBidService(auctionId, userId, bidAmount) {
     try {
       // Check if auction exists
+      console.log("Received auctionId for lookup:", auctionId);
       const auction = await Auction.findById(auctionId).populate('bids');
   
       if (!auction) {
@@ -38,7 +39,7 @@ export async function placeBidService(auctionId, userId, bidAmount) {
       }
   
       // Check if user has already placed a bid
-      const existingBid = await Bid.findOne({ userId, auctionId });
+      const existingBid = await Bid.findOne({ userId, auctionId }).lean();
   
       if (existingBid) {
         throw new Error("You have already placed a bid on this auction.");
@@ -51,9 +52,7 @@ export async function placeBidService(auctionId, userId, bidAmount) {
   
       // Place the bid
       const newBid = await createBidRepo({ auctionId, userId, bidAmount });
-  
-      await newBid.save();
-  
+    
       // Update auction document by pushing the new bid ID
       await Auction.findByIdAndUpdate(auctionId, {
         $push: { bids: newBid._id },

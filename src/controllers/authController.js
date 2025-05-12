@@ -40,6 +40,11 @@ export async function login(req, res) {
                 userRole: response.userRole,
                 userData: response.userData
             },
+            user: {
+                id: response.userData._id,
+                userEmail: response.userData.email,
+                userRole: response.userRole
+            },
             error: {}
         })
     } catch(error) {

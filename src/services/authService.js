@@ -36,6 +36,7 @@ console.log("Payload:", { email: user.email, id: user._id, role: userRole });
 console.log("Generated Token:", token);
 
     return {token, userRole, userData: {
+        _id: user._id,
         email: user.email,
         firstName: user.firstName,
     }};

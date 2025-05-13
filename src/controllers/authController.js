@@ -23,8 +23,6 @@ export async function login(req, res) {
 
         console.log("While login", req.cookies);
 
-        console.log("console after req.cookies");
-
         const response = await loginUser(loginPayload);
 
         res.cookie("authToken", response.token, {

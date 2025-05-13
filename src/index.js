@@ -8,13 +8,15 @@ import authRouter from './routes/authRoutes.js';
 import auctionRouter from './routes/auctionRoutes.js';
 import bidRouter from './routes/bidRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
+import getAllUsersRoutes from './routes/getAllUsersRoutes.js';
+import reportRouter from './routes/reportRoutes.js';
 
 const app = express();
 
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true
-}))
+}));
 
 app.use(express.json());
 app.use(express.text());
@@ -28,6 +30,8 @@ app.use('/auth', authRouter)
 app.use('/auctions', auctionRouter);
 app.use("/bids", bidRouter)
 app.use("/", adminRouter);
+app.use('/', getAllUsersRoutes)
+app.use('/', reportRouter)
 
 app.post('/ping', (req, res) => {
     console.log(req.body);

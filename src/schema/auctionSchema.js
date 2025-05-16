@@ -6,7 +6,7 @@ const auctionSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      minLength: [3, "Length of the title should atleast 3 characters long"],
+      minLength: [7, "Length of the title should atleast 7 characters long"],
       maxLength: [20, "Length of the title should atmost 20 characters long"],
     },
     description: {

@@ -25,6 +25,7 @@ export async function getAuctionRepo(filters) {
                 path: "bids", // populates the bids fields
                 select: "bidAmount userId" // only get amount and userId field
             })
+            .populate("winnerId", "firstName lastName email")
             .limit(Number(filters.limit));  // Convert limit to number
 
             console.log("Fetched auction:", auctions); // Debugging
@@ -39,12 +40,9 @@ export async function getAuctionRepo(filters) {
 
 export async function updateAuctionRepo(auctionId, updateData) {
     try {
-        console.log("Updating auction with ID:", auctionId);  // Debugging
-        console.log("Update data received:", updateData);
-
         const response = await Auction.findByIdAndUpdate(
             auctionId, updateData,
-            {new: true, runValidators: true}); // Ensures new data is returned & validation runs
+            {new: true, runValidators: true}).populate("winnerId", "firstName lastName email")
             if (!response) {
                 console.log(`Couldn't find the auction with ID: ${auctionId}`);
                 return null;

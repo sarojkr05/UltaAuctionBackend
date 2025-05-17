@@ -93,98 +93,65 @@ export async function getAuctionService(filters) {
 //     return await updateAuctionRepo(auctionId, { status: "completed", winnerId: winningUser });
 // }
 
-// latest one..
-// export const declareWinnerService = async (auctionId) => {
-//     try {
-//         // Fetch the auction with all bids
-//         const auction = await Auction.findById(auctionId).populate("bids");
-
-//         if (!auction || auction.bids.length === 0) {
-//             throw new Error("No bids found for this auction");
-//         }
-
-//         // Step 2: Count bid frequencies
-//         const bidMap = new Map(); // To store bid amounts and their count
-//         auction.bids.forEach((bid) => {
-//             bidMap.set(bid.bidAmount, (bidMap.get(bid.bidAmount) || 0) + 1);
-//         });
-
-//         // Step 3: Find unique bids (those that appear only once)
-//         const uniqueBids = auction.bids.filter(bid => bidMap.get(bid.bidAmount) === 1);
-
-//         if (uniqueBids.length === 0) {
-//             throw new Error("No unique bids found");
-//         }
-
-//         // Step 4: Find the lowest unique bid
-//         uniqueBids.sort((a, b) => a.bidAmount - b.bidAmount); // Sort by amount (ascending)
-
-//         // Step 5: From lowest unique bids, select the earliest one
-//         const lowestUniqueBids = uniqueBids.filter(bid => bid.bidAmount === uniqueBids[0].bidAmount);
-//         lowestUniqueBids.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // Sort by timestamp (earliest first)
-
-//         const winnerBid = lowestUniqueBids[0]; // The earliest lowest unique bid
-
-//         // Step 6: Update the auction with the winner
-//         auction.winnerId = winnerBid.userId;
-//         auction.status = "completed";
-//         await auction.save();
-
-//         return { message: "Auction updated successfully", winnerId: winnerBid.userId };
-//     } catch (error) {
-//         throw new Error(error.message);
-//     }
-// };
 export const declareWinnerService = async (auctionId) => {
-    try {
-        const auction = await Auction.findById(auctionId).populate("bids");
+  try {
+    const auction = await Auction.findById(auctionId).populate("bids")
 
-        if (!auction || auction.bids.length === 0) {
-            throw new Error("No bids found for this auction");
-        }
-
-        const bidFrequency = new Map();
-        auction.bids.forEach(bid => {
-            bidFrequency.set(bid.bidAmount, (bidFrequency.get(bid.bidAmount) || 0) + 1);
-        });
-
-        // Step 1: Disqualify duplicated bids
-        for (const bid of auction.bids) {
-            if (bidFrequency.get(bid.bidAmount) > 1) {
-                bid.status = "disqualified";
-                await bid.save();
-            }
-        }
-
-        // Step 2: Get only unique bids
-        const uniqueBids = auction.bids.filter(bid => bidFrequency.get(bid.bidAmount) === 1);
-
-        if (uniqueBids.length === 0) {
-            throw new Error("No unique bids found. All lowest bids are duplicated.");
-        }
-
-        // Step 3: Sort and pick lowest unique
-        uniqueBids.sort((a, b) => a.bidAmount - b.bidAmount);
-        const lowestAmount = uniqueBids[0].bidAmount;
-        const finalBids = uniqueBids.filter(bid => bid.bidAmount === lowestAmount);
-        finalBids.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
-        const winnerBid = finalBids[0];
-        winnerBid.status = "winner";
-        await winnerBid.save();
-
-        auction.winnerId = winnerBid.userId;
-        auction.status = "completed";
-        await auction.save();
-
-        return {
-            message: "Winner declared successfully",
-            winnerId: winnerBid.userId
-        };
-    } catch (error) {
-        throw new Error(error.message);
+    if (!auction || auction.bids.length === 0) {
+      throw new Error("No bids found for this auction");
     }
+
+    const bidFrequency = new Map();
+    auction.bids.forEach((bid) => {
+      bidFrequency.set(
+        bid.bidAmount,
+        (bidFrequency.get(bid.bidAmount) || 0) + 1
+      );
+    });
+
+    // Step 1: Disqualify duplicated bids
+    for (const bid of auction.bids) {
+      if (bidFrequency.get(bid.bidAmount) > 1) {
+        bid.status = "disqualified";
+        await bid.save();
+      }
+    }
+
+    // Step 2: Get only unique bids
+    const uniqueBids = auction.bids.filter(
+      (bid) => bidFrequency.get(bid.bidAmount) === 1
+    );
+
+    if (uniqueBids.length === 0) {
+      throw new Error("No unique bids found. All lowest bids are duplicated.");
+    }
+
+    // Step 3: Sort and pick lowest unique
+    uniqueBids.sort((a, b) => a.bidAmount - b.bidAmount);
+    const lowestAmount = uniqueBids[0].bidAmount;
+    const finalBids = uniqueBids.filter(
+      (bid) => bid.bidAmount === lowestAmount
+    );
+    finalBids.sort(
+      (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+    );
+
+    const winnerBid = finalBids[0];
+    winnerBid.status = "winner";
+    await winnerBid.save();
+
+    // ✅ Call repository to update and populate winnerId
+    const updatedAuction = await updateAuctionRepo(auctionId, {
+      winnerId: winnerBid.userId,
+      status: "completed",
+    });
+
+    return updatedAuction;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
+
 
 export async function getAuctionByIdService(auctionId) {
     const auction = await getAuctionById(auctionId)

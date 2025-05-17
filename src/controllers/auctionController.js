@@ -44,7 +44,7 @@ export async function getAuctionController(req, res) {
 
 export async function declareWinnerController(req, res) {
     try {
-        const auctions = await declareWinnerService(req.params.id);
+        const auctions = await declareWinnerService(req.params.id)
         return res.status(200).json({
             success: true,
             message: "Auction updated successfully",

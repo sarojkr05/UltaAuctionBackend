@@ -11,6 +11,7 @@ import adminRouter from './routes/adminRoutes.js';
 import getAllUsersRoutes from './routes/getAllUsersRoutes.js';
 import reportRouter from './routes/reportRoutes.js';
 import otpRouter from './routes/otpRoutes.js';
+import LeaderboardRouter from './routes/userLeaderboardRoutes.js';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use("/", adminRouter);
 app.use('/', getAllUsersRoutes)
 app.use('/', reportRouter)
 app.use('/otp', otpRouter);
+app.use('/leaderboard', LeaderboardRouter);
 
 app.post('/ping', (req, res) => {
     console.log(req.body);

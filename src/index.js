@@ -15,8 +15,14 @@ import LeaderboardRouter from './routes/userLeaderboardRoutes.js';
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://ulta-auction-frontend-zf3k.vercel.app'  // ✅ Add your Vercel domain
+];
+
+
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true
 }));
 

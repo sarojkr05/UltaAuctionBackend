@@ -6,7 +6,8 @@ export async function logout(req, res) {
 
     res.cookie("authToken", "", {
         httpOnly: true,
-        secure: false,
+        sameSite: "none",
+        secure: true, // it was false earlier
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
     return res.status(200).json({
@@ -27,7 +28,8 @@ export async function login(req, res) {
 
         res.cookie("authToken", response.token, {
             httpOnly: true,
-            secure: false,
+            sameSite: "none",
+            secure: true, // this was false too
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 

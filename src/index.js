@@ -12,6 +12,7 @@ import getAllUsersRoutes from './routes/getAllUsersRoutes.js';
 import reportRouter from './routes/reportRoutes.js';
 import otpRouter from './routes/otpRoutes.js';
 import LeaderboardRouter from './routes/userLeaderboardRoutes.js';
+import paymentRouter from './routes/paymentRoutes.js';
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use('/', getAllUsersRoutes)
 app.use('/', reportRouter)
 app.use('/otp', otpRouter);
 app.use('/leaderboard', LeaderboardRouter);
+app.use('/payment', paymentRouter);
 
 app.post('/ping', (req, res) => {
     console.log(req.body);

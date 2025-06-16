@@ -1,9 +1,9 @@
 import Bid from "../schema/bidSchema.js"
 import mongoose from "mongoose";
 
-export async function createBidRepo(auctionId, userId, bidAmount) {
+export async function createBidRepo({ auctionId, userId, bidAmount }) {
     try {
-        const bid = new Bid(auctionId, userId, bidAmount);
+        const bid = new Bid({ auctionId, userId, bidAmount });
         return await bid.save();
     } catch (error) {
         console.error("Error in createBidRepo:", error);

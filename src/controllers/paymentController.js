@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import razorpayInstance from "../utils/razorpay.js";
+import jwt from "jsonwebtoken"
 export const createOrderController = async (req, res) => {
   const { amount, currency = "INR", receipt } = req.body;
 
@@ -33,7 +34,14 @@ export const verifyPayment = (req, res) => {
   const generatedSignature = hmac.digest("hex");
 
   if (generatedSignature === razorpay_signature) {
-    res.status(200).json({ success: true, message: "Payment verified" });
+    // Generate a short-lived token
+    const token = jwt.sign(
+      { orderrId : razorpay_order_id, paymentId: razorpay_payment_id, userId: req.user?.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "2m" } // Token valid for 2 mins
+    );
+
+    res.status(200).json({ success: true, message: "Payment verified", token });
   } else {
     res.status(400).json({ success: false, message: "Invalid signature" });
   }

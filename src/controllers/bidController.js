@@ -1,13 +1,20 @@
 import { getBidByIdService, fetchBidsByAuctionId, placeBidService } from "../services/bidService.js";
+import jwt from "jsonwebtoken";
 
 export async function placeBidController(req, res) {
+    const token = req.headers["authorization"] // You can name it anything, but I will use authorization
+
+        if(!token) {
+            return res.status(401).json({
+                success: false,
+                message: "Payment token missing"
+            });
+        }
+
     try {
         const {auctionId, bidAmount} = req.body;
-        const userId = req.user.id;
-
-        console.log("auctionId:", auctionId);
-        console.log("userId:", userId);
-        console.log("bidAmount:", bidAmount);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = req.user?.id || decoded?.userId;
 
         const response = await placeBidService(auctionId, userId, bidAmount)
         res.status(201).json({

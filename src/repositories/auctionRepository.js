@@ -56,8 +56,10 @@ export async function updateAuctionRepo(auctionId, updateData) {
 }
 
 export async function getAuctionById(auctionId) {
-    return await Auction.findById(auctionId)
-    .populate('bids.userId', 'name email') // Optional : populate bidder info
+    return await Auction.findById(auctionId).populate({
+        path: "bids",
+        select: "userId"
+    })
     .exec();
 }
 

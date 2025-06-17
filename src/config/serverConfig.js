@@ -12,6 +12,8 @@ const serverConfig = {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
     RAZORPAY_SECRET: process.env.RAZORPAY_SECRET,
+    COOKIE_EXPIRY_MS: process.env.COOKIE_EXPIRY_MS || '604800000', // Default to 7 days if not set
+    NODE_ENV: process.env.NODE_ENV || 'development',
 };
 
 export default serverConfig;

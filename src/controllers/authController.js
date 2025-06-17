@@ -1,15 +1,11 @@
+import { COOKIE_OPTIONS } from "../config/cookieConfig.js";
 import { loginUser } from "../services/authService.js";
 
 export async function logout(req, res) {
 
     console.log("Cookie from controller frontend", req.cookies);
 
-    res.cookie("authToken", "", {
-        httpOnly: true,
-        sameSite: "none",
-        secure: true, // it was false earlier
-        maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie("authToken", "", { ...COOKIE_OPTIONS, maxAge: 0 });
     return res.status(200).json({
         success: true,
         message: "Log out successfull",
@@ -22,16 +18,9 @@ export async function login(req, res) {
     try {
         const loginPayload = req.body;
 
-        console.log("While login", req.cookies);
-
         const response = await loginUser(loginPayload);
 
-        res.cookie("authToken", response.token, {
-            httpOnly: true,
-            sameSite: "none",
-            secure: true, // this was false too
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+        res.cookie("authToken", response.token, COOKIE_OPTIONS);
 
         return res.status(200).json({
             success: true,

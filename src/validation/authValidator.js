@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import {UnAuthorisedError} from '../utils/unAuthorizedError.js'
 import serverConfig from '../config/serverConfig.js';
+import { COOKIE_OPTIONS } from '../config/cookieConfig.js';
 
 export async function isLoggedIn(req, res, next) {
     const token = req.cookies["authToken"];
@@ -31,20 +32,19 @@ export async function isLoggedIn(req, res, next) {
         next();
     } catch (error) {
         console.log(error.name);
-         if(error.name === "TokenExpiredError") {
-             res.cookie("authToken", "", {
-                 httpOnly: true,
-                 sameSite: "none", /** if you are on localhost set sameSite lax and secure false */
-                 secure: true, // it was false earlier
-                 maxAge: 7 * 24 * 60 * 60 * 1000
-             });
-             return res.status(200).json({
-                 success: true,
-                 message: "Log out successfull",
-                 error: {},
-                 data: {}
-             });
-         }
+         if (error.name === "TokenExpiredError") {
+            res.clearCookie("authToken", COOKIE_OPTIONS);
+
+            return res.status(401).json({
+                success: false,
+                message: "Token expired",
+                error: {
+                    name: error.name,
+                    message: error.message
+                },
+                data: {}
+            });
+        }
         return res.status(401).json({
             success: false,
             data: {},

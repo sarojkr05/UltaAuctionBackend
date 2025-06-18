@@ -70,8 +70,29 @@ export async function placeBidService(auctionId, userId, bidAmount) {
     if (updatedAuction.slotsFilled + 1 >= updatedAuction.maxSlots) {
       updatedAuction.status = "completed";
       await updatedAuction.save();
-    }
 
+      const bids = await Bid.find({ auctionId });
+
+      const bidAmountMap = {};
+
+      for (const bid of bids) {
+        const amount = bid.bidAmount;
+        if (bidAmountMap[amount]) {
+          bidAmountMap[amount] = [];
+        } else {
+          bidAmountMap[amount].push(bid._id);
+        }
+      }
+      for (const amount in bidAmountMap) {
+        const bidsWithAmount = bidAmountMap[amount];
+        const status = bidsWithAmount.length === 1 ? "valid" : "disqualified";
+
+        await Bid.updateMany(
+          { _id: { $in: bidsWithAmount } },
+          { $set: { status } }
+        );
+      }
+    }
     return newBid;
   } catch (error) {
     console.error("Error in placing bid Service", error);

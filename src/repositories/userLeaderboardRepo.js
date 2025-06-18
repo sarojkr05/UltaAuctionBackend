@@ -1,7 +1,4 @@
-// repositories/leaderboard.repository.js
 import { Auction } from "../schema/auctionSchema.js";
-import Bid from "../schema/bidSchema.js";
-import { User } from "../schema/userSchema.js";
 
 export const getAuctionLeaderboard = async (auctionId) => {
   const auction = await Auction.findById(auctionId).populate({
@@ -16,15 +13,36 @@ export const getAuctionLeaderboard = async (auctionId) => {
     throw new Error("No bids found for this auction.");
   }
 
-  // Sort the bids by bidAmount ascending
-  const sortedBids = auction.bids
-    .map((bid) => ({
-      name: `${bid.userId.firstName} ${bid.userId.lastName}`,
-      email: bid.userId.email,
-      bidAmount: bid.bidAmount,
-      status: bid.status,
-    }))
-    .sort((a, b) => a.bidAmount - b.bidAmount);
+  // Step 1: Count how many times each bidAmount appears
+  const bidAmountCount = {};
+  auction.bids.forEach((bid) => {
+    const amount = bid.bidAmount;
+    bidAmountCount[amount] = (bidAmountCount[amount] || 0) + 1;
+  });
 
-  return sortedBids;
+  // Step 2: Return leaderboard with disqualified duplicates, preserve "winner"
+  const leaderboard = auction.bids.map((bid) => {
+    const name = `${bid.userId.firstName} ${bid.userId.lastName}`;
+    const email = bid.userId.email;
+    const bidAmount = bid.bidAmount;
+    const existingStatus = bid.status;
+
+    let status = "valid";
+
+    if (existingStatus === "winner") {
+      status = "winner";
+    } else if (bidAmountCount[bidAmount] > 1) {
+      status = "disqualified";
+    }
+
+    return {
+      name,
+      email,
+      bidAmount,
+      status,
+    };
+  });
+
+  // Optional: Sort leaderboard by bid amount ascending
+  return leaderboard.sort((a, b) => a.bidAmount - b.bidAmount);
 };

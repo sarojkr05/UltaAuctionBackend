@@ -18,9 +18,9 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://ulta-auction-frontend.vercel.app',
+  'https://ulta-auction-frontend-saroj-kumar-das-projects.vercel.app',
   "https://ulta-auction-frontend-git-main-saroj-kumar-das-projects.vercel.app",
-  "https://ulta-auction-frontend-3n2i11on4-saroj-kumar-das-projects.vercel.app"  // ✅ Add your Vercel domain
+  "https://ulta-auction-frontend-rdsxua9kr-saroj-kumar-das-projects.vercel.app"  // ✅ Add your Vercel domain
 ];
 
 

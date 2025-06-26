@@ -37,16 +37,26 @@ export async function placeBidService(auctionId, userId, bidAmount) {
     // Check if auction exists
     console.log("Received auctionId for lookup:", auctionId);
     const auction = await Auction.findById(auctionId).populate("bids");
+    //added this one
+    if (bidAmount < auction.startingBid) {
+      throw new Error(`Bid must be at least ₹${auction.startingBid}`);
+    }
+
+    if (bidAmount > auction.endingBid) {
+      throw new Error(`Bid must not exceed ₹${auction.endingBid}`);
+    }
 
     if (!auction) {
       throw new Error("Auction not found.");
     }
 
-    // Check if user has already placed a bid
-    const existingBid = await Bid.findOne({ userId, auctionId }).lean();
+    // Check how many bids the user has already placed on this auction
+    const userBidsCount = await Bid.countDocuments({ userId, auctionId });
 
-    if (existingBid) {
-      throw new Error("You have already placed a bid on this auction.");
+    if (userBidsCount >= 5) {
+      throw new Error(
+        "You have reached the maximum limit of 5 bids for this auction."
+      );
     }
 
     // Check if auction is full

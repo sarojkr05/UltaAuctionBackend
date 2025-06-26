@@ -25,9 +25,15 @@ const auctionSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    bidIncrement: {
+    endingBid: {
       type: Number,
       required: true,
+      validate: {
+        validator: function (val) {
+          return val > this.startingBid;
+        },
+        message: "Ending bid must be greater than starting bid.",
+      },
     },
     endTime: {
       type: Date,
@@ -56,16 +62,16 @@ const auctionSchema = new mongoose.Schema(
     auctionImage: {
       type: String,
       default: null,
-      required: false
+      required: false,
     },
     maxSlots: {
       type: Number,
-      required: true
+      required: true,
     },
     slotsFilled: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   {
     timestamps: true,

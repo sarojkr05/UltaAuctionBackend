@@ -6,8 +6,8 @@ const auctionSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      minLength: [7, "Length of the title should atleast 7 characters long"],
-      maxLength: [20, "Length of the title should atmost 20 characters long"],
+      minLength: [5, "Length of the title should atleast 5 characters long"],
+      maxLength: [30, "Length of the title should atmost 30 characters long"],
     },
     description: {
       type: String,
@@ -17,8 +17,8 @@ const auctionSchema = new mongoose.Schema(
         "Length of the description should atleast 5 characters long",
       ],
       maxLength: [
-        35,
-        "Length of the description should atmost 35 characters long",
+        40,
+        "Length of the description should atmost 40 characters long",
       ],
     },
     startingBid: {
@@ -57,6 +57,7 @@ const auctionSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Bid",
+        default: []
       },
     ], // Reference to Bid Ids
     auctionImage: {

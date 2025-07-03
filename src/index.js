@@ -2,7 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import serverConfig from './config/serverConfig.js';
-import connectDB from './config/dbConfig.js'
+import connectDB from './config/dbConfig.js';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import auctionRouter from './routes/auctionRoutes.js';
@@ -20,14 +20,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://ulta-auction-frontend-saroj-kumar-das-projects.vercel.app',
   "https://ulta-auction-frontend-git-main-saroj-kumar-das-projects.vercel.app",
-  "https://ulta-auction-frontend-rdsxua9kr-saroj-kumar-das-projects.vercel.app"  // ✅ Add your Vercel domain
+  "https://ulta-auction-frontend-rdsxua9kr-saroj-kumar-das-projects.vercel.app"
 ];
-
-
-// app.use(cors({
-//     origin: allowedOrigins,
-//     credentials: true
-// }));
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -53,7 +47,7 @@ app.use('/auctions', auctionRouter);
 app.use("/bids", bidRouter)
 app.use("/", adminRouter);
 app.use('/', getAllUsersRoutes)
-app.use('/', reportRouter)
+app.use('/', reportRouter);
 app.use('/otp', otpRouter);
 app.use('/leaderboard', LeaderboardRouter);
 app.use('/payment', paymentRouter);

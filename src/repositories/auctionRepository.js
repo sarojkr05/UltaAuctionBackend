@@ -28,8 +28,6 @@ export async function getAuctionRepo(filters) {
             .populate("winnerId", "firstName lastName email")
             .limit(Number(filters.limit));  // Convert limit to number
 
-            console.log("Fetched auction:", auctions); // Debugging
-
         return auctions;
     } catch (error) {
         console.error("Error in getAuctionRepo:", error);

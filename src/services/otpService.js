@@ -1,32 +1,24 @@
-import { saveOtp, verifyOtp as verifyStoreOtp } from "../repositories/otpStore.js";
-import client from "../utils/twilioClient.js";
-export const sendOTP = async (phone) => {
-  const otp = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit OTP
-  const message = `Your OTP is ${otp}. It is valid for 5 minutes.`;
+import twilio from "twilio";
+import serverConfig from "../config/serverConfig.js";
+const client = new twilio(serverConfig.TWILIO_ACCOUNT_SID, serverConfig.TWILIO_AUTH_TOKEN);
 
-  try {
-    await client.messages.create({
-      body: message,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: phone,
-    });
+const otpStore = new Map(); // Use Redis or DB in production
 
-    console.log("OTP sent from Twilio:", process.env.TWILIO_PHONE_NUMBER);
-    console.log("OTP sent to phone:", phone);
+export const sendOtp = async (mobile) => {
+  const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
+  otpStore.set(mobile, otp);
 
-    saveOtp(phone, otp);
-    return { message: "OTP sent successfully" };
-  } catch (error) {
-    console.error("Error sending OTP:", error);
-    throw new Error("Failed to send OTP");
-  }
-}
+  await client.messages.create({
+    body: `Your OTP for UltaAuction is ${otp}`,
+    from: serverConfig.TWILIO_PHONE_NUMBER,
+    to: `+91${mobile}`
+  });
 
-export const verifyOTP = (phone, otp) => {
-  const isValid = verifyStoreOtp(phone, otp);
-  if (!isValid) {
-    throw new Error("Invalid or expired OTP");
-  }
+  // Set expiration (optional)
+  setTimeout(() => otpStore.delete(mobile), 5 * 60 * 1000); // 5 minutes
+};
 
-  return { message: "OTP verified successfully" };
+export const verifyOtp = (mobile, inputOtp) => {
+  const savedOtp = otpStore.get(mobile);
+  return savedOtp && savedOtp.toString() === inputOtp;
 };

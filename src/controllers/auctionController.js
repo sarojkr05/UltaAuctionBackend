@@ -25,7 +25,6 @@ export async function createAuctionController(req, res) {
 export async function getAuctionController(req, res) {
     try {
         const auctions = await getAuctionService(req.query);
-        console.log(auctions)
         return res.status(200).json({
             success: true,
             message: "Auction fetched successfully",
@@ -122,8 +121,6 @@ export async function getAuctionByIdController(req, res, next) {
             ...req.body,
             imagePath: req.file ? req.file.path : null // ✅ Correct field name
         };
-
-        console.log("Updated Data:", updatedData);
 
         // Optional type checks
         if (req.body.startingBid && !isNaN(req.body.startingBid)) {

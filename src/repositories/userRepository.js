@@ -2,14 +2,16 @@ import { User } from "../schema/userSchema.js";
 import { BadRequestError } from '../utils/badRequestError.js'
 import { InternalServerError } from '../utils/internalServerError.js'
 
-export async function findUser(parameters) {
-    try {
-        const response = await User.findOne({ ...parameters });
-        return response;
-    } catch(error) {
-        console.log(error);
-    } 
+export async function findUser(filter) {
+  try {
+    const response = await User.findOne(filter);
+    return response;
+  } catch (error) {
+    console.log("Error in findUser:", error);
+    throw new InternalServerError();
+  }
 }
+
 
 export async function createUser(userDetails) {
     try {

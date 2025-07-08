@@ -52,7 +52,7 @@ app.use('/otp', otpRouter);
 app.use('/leaderboard', LeaderboardRouter);
 app.use('/payment', paymentRouter);
 
-app.post('/ping', (req, res) => {
+app.get('/ping', (req, res) => {
     console.log(req.body);
     return res.json({message: "pong"});
 })
